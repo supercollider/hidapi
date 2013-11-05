@@ -1,0 +1,1 @@
+/usr/bin/c++   -g -arch x86_64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/hidtestosx.dir/hidtestosx.cpp.o  -o hidtestosx  ../mac/libhidapi.a ../hidapi_parser/libhidapi_parser.a -framework CoreFoundation -framework IOKit 

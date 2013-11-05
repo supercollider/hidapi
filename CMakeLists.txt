@@ -72,6 +72,7 @@ add_subdirectory(hidapi_parser)
 if( EXAMPLE_TEST )
   add_subdirectory(hidtest)
   add_subdirectory(hidparsertest)
+  add_subdirectory(hidtestosx)
 endif()
 
 if( EXAMPLE_OSC )
