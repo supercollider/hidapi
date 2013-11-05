@@ -8,7 +8,7 @@ set(VERSION_PATCH "1")
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 
-option(DEBUG_PARSER "verbose parser debuggint output" OFF)
+option(DEBUG_PARSER "verbose parser debugging output" OFF)
 
 option(LIBUSB "use libusb backend" OFF)
 option(HIDRAW "use hidraw backend (linux/freebsd)" ON)
