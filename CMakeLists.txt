@@ -54,6 +54,7 @@ if(WIN32)
   #todo: add library dependencies
 endif()
 if(APPLE)
+  add_definitions( -DAPPLE )
   add_subdirectory(mac)
 #   set( hidapi_source ${hidapi_SOURCE_DIR}/mac )
   #todo: add library dependencies - TEST
