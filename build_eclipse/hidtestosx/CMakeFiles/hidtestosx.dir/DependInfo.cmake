@@ -8,6 +8,11 @@ SET(CMAKE_DEPENDS_CHECK_CXX
   )
 SET(CMAKE_CXX_COMPILER_ID "Clang")
 
+# Preprocessor definitions for this target.
+SET(CMAKE_TARGET_DEFINITIONS
+  "APPLE"
+  )
+
 # Targets to which this target links.
 SET(CMAKE_TARGET_LINKED_INFO_FILES
   "/Users/TestOSX107/development/hidapi/build_eclipse/mac/CMakeFiles/hidapi.dir/DependInfo.cmake"
