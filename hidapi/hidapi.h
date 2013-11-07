@@ -296,7 +296,6 @@ extern "C" {
 
 		int HID_API_EXPORT HID_API_CALL hid_get_report_descriptor(hid_device *dev, unsigned char *data, size_t length);
 
-		int HID_API_EXPORT HID_API_CALL hid_dump_element_info(hid_device *dev);
 
 		/** @brief Send a Feature report to the device.
 
@@ -413,6 +412,17 @@ extern "C" {
 				which occurred or NULL if none has occurred.
 		*/
 		HID_API_EXPORT const wchar_t* HID_API_CALL hid_error(hid_device *device);
+
+
+#ifdef APPLE
+
+#include <IOKit/hid/IOHIDManager.h>
+#include <IOKit/hid/IOHIDKeys.h>
+#include <CoreFoundation/CoreFoundation.h>
+
+		int HID_API_EXPORT HID_API_CALL hid_dump_element_info(hid_device *dev);
+		IOHIDDeviceRef HID_API_EXPORT HID_API_CALL get_device_handle( hid_device *dev );
+#endif
 
 #ifdef __cplusplus
 }
