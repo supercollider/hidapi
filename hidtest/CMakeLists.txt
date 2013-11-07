@@ -13,6 +13,6 @@ set(hidtest_SRCS
 
 add_executable( hidtest ${hidtest_SRCS} )
 
-target_link_libraries(hidtest hidapi hidapi_parser )
+target_link_libraries(hidtest hidapi hidapi_parser ${EXTRA_LIBS})
 
 install(TARGETS hidtest DESTINATION bin)

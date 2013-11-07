@@ -296,6 +296,7 @@ extern "C" {
 
 		int HID_API_EXPORT HID_API_CALL hid_get_report_descriptor(hid_device *dev, unsigned char *data, size_t length);
 
+		int HID_API_EXPORT HID_API_CALL hid_dump_element_info(hid_device *dev);
 
 		/** @brief Send a Feature report to the device.
 

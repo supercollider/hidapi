@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../hidapi/hidapi.h
+wchar.h
+-
+
+/Users/TestOSX107/development/hidapi/hidtestosx/hidtestosx.cpp
+windows.h
+-
+stdio.h
+-
+stdlib.h
+-
+hidapi.h
+/Users/TestOSX107/development/hidapi/hidtestosx/hidapi.h
+

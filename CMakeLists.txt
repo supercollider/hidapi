@@ -54,10 +54,16 @@ if(WIN32)
   #todo: add library dependencies
 endif()
 if(APPLE)
+  add_definitions( -DAPPLE )
   add_subdirectory(mac)
 #   set( hidapi_source ${hidapi_SOURCE_DIR}/mac )
   #todo: add library dependencies - TEST
-  link_directories("-framework IOKit -framework CoreFoundation")
+  find_library(IOKIT_LIBRARY IOKit )
+  find_library(COREFOUNDATION_LIBRARY CoreFoundation )
+  mark_as_advanced (COREFOUNDATION_LIBRARY
+                     IOKIT_LIBRARY)
+  set(EXTRA_LIBS ${COREFOUNDATION_LIBRARY} ${IOKIT_LIBRARY})
+  #link_directories("-framework IOKit -framework CoreFoundation")
 endif()
 
 add_subdirectory(hidapi_parser)
@@ -67,6 +73,9 @@ add_subdirectory(hidapi_parser)
 if( EXAMPLE_TEST )
   add_subdirectory(hidtest)
   add_subdirectory(hidparsertest)
+  if(APPLE)
+    add_subdirectory(hidtestosx)
+  endif()
 endif()
 
 if( EXAMPLE_OSC )
