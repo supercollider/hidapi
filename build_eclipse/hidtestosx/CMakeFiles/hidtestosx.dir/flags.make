@@ -4,5 +4,5 @@
 # compile CXX with /usr/bin/c++
 CXX_FLAGS = -g -arch x86_64 -I/Users/TestOSX107/development/hidapi/build_eclipse -I/Users/TestOSX107/development/hidapi/hidapi -I/Users/TestOSX107/development/hidapi/hidapi_parser   
 
-CXX_DEFINES = 
+CXX_DEFINES = -DAPPLE
 

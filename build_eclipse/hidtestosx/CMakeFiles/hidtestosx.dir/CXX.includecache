@@ -9,6 +9,12 @@
 ../hidapi/hidapi.h
 wchar.h
 -
+IOKit/hid/IOHIDManager.h
+-
+IOKit/hid/IOHIDKeys.h
+-
+CoreFoundation/CoreFoundation.h
+-
 
 /Users/TestOSX107/development/hidapi/hidtestosx/hidtestosx.cpp
 windows.h
