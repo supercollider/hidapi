@@ -1,3 +1,6 @@
+*.o
+build/*
+build_eclipse/*
 
 # Autotools-added generated files
 Makefile.in
