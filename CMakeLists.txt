@@ -8,19 +8,21 @@ set(VERSION_PATCH "1")
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 
-option(DEBUG_PARSER "verbose parser debugging output" OFF)
+option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
 
-option(LIBUSB "use libusb backend" OFF)
-option(HIDRAW "use hidraw backend (linux/freebsd)" ON)
+# option(LIBUSB "use libusb backend" OFF)
+# option(HIDRAW "use hidraw backend (linux/freebsd)" ON)
 
-option(EXAMPLE_TEST "build test example" ON)
-option(EXAMPLE_OSC "build osc example" ON)
+option(HID_EXAMPLE_TEST "build test example" ON)
+option(HID_EXAMPLE_OSC "build osc example" ON)
 
+
+set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
 
 # add our own cmake-modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake_modules/")
 
-if( DEBUG_PARSER )
+if( HID_DEBUG_PARSER )
   add_definitions( -DDEBUG_PARSER )
 endif()
 
@@ -36,23 +38,35 @@ endif()
 # directories
 add_subdirectory(hidapi)
 
-if(LIBUSB)
-  add_subdirectory(libusb)
-#   set( hidapi_source ${hidapi_SOURCE_DIR}/libusb )
-  link_directories( ${LIBUSB_1_LIBRARIES} ${PTHREADS_LIBRARIES} )
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  if(HIDAPI STREQUAL "default")
+    set( HIDAPI hidraw )
+  endif()
+
+  if(NOT HIDAPI MATCHES "^(libusb|hidraw)$")
+        message(WARNING "Unrecognised hid API: ${HIDAPI}")
+  endif()
+  
+
+  if (HIDAPI STREQUAL hidraw)
+    add_subdirectory(linux)
+  #   set( hidapi_source ${hidapi_SOURCE_DIR}/linux )
+    link_directories( ${UDEV_LIBRARIES} )
+  elseif (HIDAPI STREQUAL libusb)
+    add_subdirectory(libusb)
+  #   set( hidapi_source ${hidapi_SOURCE_DIR}/libusb )
+    link_directories( ${LIBUSB_1_LIBRARIES} ${PTHREADS_LIBRARIES} )  
+  endif()
+
 endif()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND HIDRAW)
-  add_subdirectory(linux)
-#   set( hidapi_source ${hidapi_SOURCE_DIR}/linux )
-  link_directories( ${UDEV_LIBRARIES} )
-endif()
 
 if(WIN32)
   add_subdirectory(windows)
 #   set( hidapi_source ${hidapi_SOURCE_DIR}/windows )
   #todo: add library dependencies
 endif()
+
 if(APPLE)
   add_definitions( -DAPPLE )
   add_subdirectory(mac)
@@ -70,7 +84,7 @@ add_subdirectory(hidapi_parser)
 
 # message( "main: hidapi source dir: ${hidapi_source}" )
 
-if( EXAMPLE_TEST )
+if( HID_EXAMPLE_TEST )
   add_subdirectory(hidtest)
   add_subdirectory(hidparsertest)
   if(APPLE)
@@ -78,6 +92,6 @@ if( EXAMPLE_TEST )
   endif()
 endif()
 
-if( EXAMPLE_OSC )
+if( HID_EXAMPLE_OSC )
   add_subdirectory(hidapi2osc)
 endif()
