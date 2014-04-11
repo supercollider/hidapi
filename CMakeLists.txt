@@ -21,7 +21,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
   set(HIDAPI "libusb")
 endif()
-  
+
+set(HID_HUT_PATH ${CMAKE_INSTALL_PREFIX}/share/hidapi CACHE STRING "Installation path for the HID usage tables")
+
 # add our own cmake-modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake_modules/")
 
@@ -97,3 +99,8 @@ endif()
 if( HID_EXAMPLE_OSC )
   add_subdirectory(hidapi2osc)
 endif()
+
+install(DIRECTORY hut
+        DESTINATION ${HID_HUT_PATH}
+	FILES_MATCHING PATTERN "*.yaml"
+)
