@@ -41,7 +41,7 @@ endif()
 # directories
 add_subdirectory(hidapi)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "^(Linux|FreeBSD)$")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
   if(HIDAPI STREQUAL "default")
     set( HIDAPI hidraw )
   endif()
