@@ -16,9 +16,10 @@ option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
 option(HID_EXAMPLE_TEST "build test example" ON)
 option(HID_EXAMPLE_OSC "build osc example" ON)
 
-
-set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
-
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
+endif()
+  
 # add our own cmake-modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake_modules/")
 
