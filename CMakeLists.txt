@@ -18,6 +18,8 @@ option(HID_EXAMPLE_OSC "build osc example" ON)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
+elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  set(HIDAPI "libusb")
 endif()
   
 # add our own cmake-modules
@@ -39,7 +41,7 @@ endif()
 # directories
 add_subdirectory(hidapi)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_SYSTEM_NAME} MATCHES "^(Linux|FreeBSD)$")
   if(HIDAPI STREQUAL "default")
     set( HIDAPI hidraw )
   endif()
@@ -48,7 +50,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         message(WARNING "Unrecognised hid API: ${HIDAPI}")
   endif()
   
-
   if (HIDAPI STREQUAL hidraw)
     add_subdirectory(linux)
   #   set( hidapi_source ${hidapi_SOURCE_DIR}/linux )
