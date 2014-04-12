@@ -13,16 +13,16 @@ option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
 # option(LIBUSB "use libusb backend" OFF)
 # option(HIDRAW "use hidraw backend (linux/freebsd)" ON)
 
-option(HID_EXAMPLE_TEST "build test example" ON)
-option(HID_EXAMPLE_OSC "build osc example" ON)
+option(HID_EXAMPLE_TEST "build test example" OFF)
+option(HID_EXAMPLE_OSC "build osc example" OFF)
+
+option(HID_INSTALL_HUT "install hid usage tables" OFF)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
 elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
   set(HIDAPI "libusb")
 endif()
-
-set(HID_HUT_PATH ${CMAKE_INSTALL_PREFIX}/share/hidapi CACHE STRING "Installation path for the HID usage tables")
 
 # add our own cmake-modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake_modules/")
@@ -100,7 +100,11 @@ if( HID_EXAMPLE_OSC )
   add_subdirectory(hidapi2osc)
 endif()
 
-install(DIRECTORY hut
-        DESTINATION ${HID_HUT_PATH}
+if( HID_DEBUG_PARSER )
+  set(HID_HUT_PATH ${CMAKE_INSTALL_PREFIX}/share/hidapi CACHE STRING "Installation path for the HID usage tables")
+
+  install(DIRECTORY hut
+	DESTINATION ${HID_HUT_PATH}
 	FILES_MATCHING PATTERN "*.yaml"
-)
+  )
+endif()
