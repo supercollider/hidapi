@@ -44,6 +44,7 @@ endif()
 add_subdirectory(hidapi)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  add_definitions( -DLINUX_FREEBSD )
   if(HIDAPI STREQUAL "default")
     set( HIDAPI hidraw )
   endif()
@@ -66,6 +67,7 @@ endif()
 
 
 if(WIN32)
+  add_definitions( -DWIN32 )
   add_subdirectory(windows)
 #   set( hidapi_source ${hidapi_SOURCE_DIR}/windows )
   #todo: add library dependencies
