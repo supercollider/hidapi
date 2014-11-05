@@ -224,7 +224,8 @@ int main(int argc, char* argv[])
 		return -1;
 
 	devs = hid_enumerate(0x0, 0x0);
-	cur_dev = devs;	
+    cur_dev = devs;
+    printf( "curdev %ls\n", cur_dev );
 	while (cur_dev) {
 		printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id, cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
 		printf("\n");
@@ -250,7 +251,9 @@ int main(int argc, char* argv[])
 	// mouse:
 // 	handle = hid_open(0x1241, 0x1166, NULL);
 	// run'n'drive
-	handle = hid_open(0x044f, 0xd003, NULL);
+//    handle = hid_open(0x044f, 0xd003, NULL);
+    // impakt
+    handle = hid_open(0x07b5, 0x0312, NULL);
 	if (!handle) {
 		printf("unable to open device\n");
  		return 1;
@@ -285,7 +288,7 @@ int main(int argc, char* argv[])
 		printf("Unable to read indexed string 1\n");
 	printf("Indexed String 1: %ls\n", wstr);
 
-
+/*
 	//// PARSING THE DESCRIPTOR
 	res = hid_get_report_descriptor( handle, descr_buf, MAX_DESCRIPTOR );
 	if (res < 0)
@@ -560,7 +563,7 @@ int main(int argc, char* argv[])
 	}
 	printf("\n");
 	printf("number of elements, %i\n", descriptor->num_elements );
-	 
+*/
 	// Set the hid_read() function to be non-blocking.
 	hid_set_nonblocking(handle, 1);
 // 	
@@ -620,6 +623,7 @@ int main(int argc, char* argv[])
 // 	  printf("bitmask test, %i, %i, %02hhx\n", i, BITMASK1(i), BITMASK1(i) );
 // 	}
 
+/*
 	// Read requested state. hid_read() has been set to be
 	// non-blocking by the call to hid_set_nonblocking() above.
 	// This loop demonstrates the non-blocking nature of hid_read().
@@ -661,7 +665,7 @@ int main(int argc, char* argv[])
 		usleep(500*100);
 		#endif
 	}
-
+*/
 
 	hid_close(handle);
 
