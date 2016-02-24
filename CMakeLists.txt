@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-
+cmake_policy(SET CMP0048 OLD)
 project(hidapi)
 
 set(VERSION_MAJOR "0")
@@ -52,7 +52,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
   if(NOT HIDAPI MATCHES "^(libusb|hidraw)$")
         message(WARNING "Unrecognised hid API: ${HIDAPI}")
   endif()
-  
+
   if (HIDAPI STREQUAL hidraw)
     add_subdirectory(linux)
   #   set( hidapi_source ${hidapi_SOURCE_DIR}/linux )
@@ -60,7 +60,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
   elseif (HIDAPI STREQUAL libusb)
     add_subdirectory(libusb)
   #   set( hidapi_source ${hidapi_SOURCE_DIR}/libusb )
-    link_directories( ${LIBUSB_1_LIBRARIES} ${PTHREADS_LIBRARIES} )  
+    link_directories( ${LIBUSB_1_LIBRARIES} ${PTHREADS_LIBRARIES} )
   endif()
 
 endif()

@@ -1,4 +1,4 @@
-message( "===hidtest cmakelists===" )
+message(STATUS "    hidtest" )
 
 include_directories(
   ${CMAKE_BINARY_DIR}

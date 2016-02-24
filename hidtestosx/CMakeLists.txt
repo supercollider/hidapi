@@ -1,4 +1,4 @@
-message( "===hidtestosx cmakelists===" )
+message(STATUS "    hidtestosx" )
 
 include_directories(
   ${CMAKE_BINARY_DIR}

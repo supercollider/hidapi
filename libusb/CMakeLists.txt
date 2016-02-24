@@ -1,4 +1,4 @@
-message( "===libusb cmakelists===" )
+message(STATUS "    libusb" )
 
 
 #rt - clock_gettime
@@ -20,7 +20,7 @@ find_package( libusb-1.0 )
 ## NOT TESTED:
 IF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
   find_package( IConv )
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD") 
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
 
 #TODO: ADD ICONV
 # set( hidapi_INCLUDE_DIRS ${LIBUSB_1_INCLUDE_DIRS} ${hidapi_SOURCE_DIR}/hidapi/ ${PTHREADS_INCLUDE_DIR})
