@@ -1,4 +1,4 @@
-message( "===mac cmakelists===" )
+message(STATUS "    mac" )
 
 #pthreads
 #-framework IOKit -framework CoreFoundation

@@ -1,4 +1,4 @@
-message( "===linux hidraw cmakelists===" )
+message(STATUS "    linux hidraw" )
 
 #udev
 find_package(UDev)

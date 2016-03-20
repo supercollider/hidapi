@@ -1,1 +1,1 @@
-message( "hidapi cmakelists" )
+message(STATUS "HIDAPI components:" )
