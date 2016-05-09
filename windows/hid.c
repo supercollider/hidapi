@@ -21,6 +21,8 @@
 ********************************************************/
 
 #include <windows.h>
+#include <hidsdi.h>
+
 
 #ifndef _NTDEF_
 typedef LONG NTSTATUS;
@@ -71,7 +73,7 @@ extern "C" {
 extern "C" {
 #endif
 
-#ifndef HIDAPI_USE_DDK
+#if 0
 	/* Since we're not building with the DDK, and the HID header
 	   files aren't part of the SDK, we have to define all this
 	   stuff here. In lookup_functions(), the function pointers
@@ -305,7 +307,7 @@ static void register_error(hid_device *device, const char *op)
 	device->last_error_str = msg;
 }
 
-#ifndef HIDAPI_USE_DDK
+#if 0 HIDAPI_USE_DDK
 static int lookup_functions()
 {
 	lib_handle = LoadLibraryA("hid.dll");
@@ -356,7 +358,7 @@ static HANDLE open_device(const char *path, BOOL enumerate)
 
 int HID_API_EXPORT hid_init(void)
 {
-#ifndef HIDAPI_USE_DDK
+#if 0 HIDAPI_USE_DDK
 	if (!initialized) {
 		if (lookup_functions() < 0) {
 			hid_exit();
@@ -370,7 +372,7 @@ int HID_API_EXPORT hid_init(void)
 
 int HID_API_EXPORT hid_exit(void)
 {
-#ifndef HIDAPI_USE_DDK
+#if 0 HIDAPI_USE_DDK
 	if (lib_handle)
 		FreeLibrary(lib_handle);
 	lib_handle = NULL;
@@ -386,7 +388,8 @@ struct hid_device_info HID_API_EXPORT * HID_API_CALL hid_enumerate(unsigned shor
 	struct hid_device_info *cur_dev = NULL;
 
 	/* Windows objects for interacting with the driver. */
-	GUID InterfaceClassGuid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30} };
+	GUID InterfaceClassGuid;
+	HidD_GetHidGuid(&InterfaceClassGuid);
 	SP_DEVINFO_DATA devinfo_data;
 	SP_DEVICE_INTERFACE_DATA device_interface_data;
 	SP_DEVICE_INTERFACE_DETAIL_DATA_A *device_interface_detail_data = NULL;
