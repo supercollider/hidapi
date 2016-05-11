@@ -999,6 +999,11 @@ HID_API_EXPORT const wchar_t * HID_API_CALL  hid_error(hid_device *dev)
 	return (wchar_t*)dev->last_error_str;
 }
 
+HANDLE HID_API_EXPORT get_device_handle(hid_device *dev){
+    return dev->device_handle;
+}
+
+
 
 /*#define PICPGM*/
 /*#define S11*/
