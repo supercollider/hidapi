@@ -249,6 +249,7 @@ struct hid_device_ {
 		BOOL read_pending;
 		char *read_buf;
 		OVERLAPPED ol;
+        PHIDP_PREPARSED_DATA preparsed_data;
 };
 
 static hid_device *new_hid_device()
@@ -703,6 +704,8 @@ HID_API_EXPORT hid_device* HID_API_CALL hid_open_path(const char *path)
 		register_error(dev, "HidD_GetPreparsedData");
 		goto err;
 	}
+    dev->preparsed_data = pp_data;
+
 	nt_res = HidP_GetCaps(pp_data, &caps);
 	if (nt_res != HIDP_STATUS_SUCCESS) {
 		register_error(dev, "HidP_GetCaps");	
@@ -801,15 +804,16 @@ int HID_API_EXPORT HID_API_CALL hid_read_timeout(hid_device *dev, unsigned char 
 		ResetEvent(ev);
 		res = ReadFile(dev->device_handle, dev->read_buf, dev->input_report_length, &bytes_read, &dev->ol);
 		
-		if (!res) {
-			if (GetLastError() != ERROR_IO_PENDING) {
-				/* ReadFile() has failed.
-				   Clean up and return error. */
-				CancelIo(dev->device_handle);
-				dev->read_pending = FALSE;
-				goto end_of_function;
-			}
-		}
+        if (!res) {
+            DWORD er = GetLastError();
+            if (GetLastError() != ERROR_IO_PENDING) {
+                /* ReadFile() has failed.
+                   Clean up and return error. */
+                CancelIoEx(dev->device_handle);
+                dev->read_pending = FALSE;
+                goto end_of_function;
+            }
+        }
 	}
 
 	if (milliseconds >= 0) {
@@ -831,20 +835,9 @@ int HID_API_EXPORT HID_API_CALL hid_read_timeout(hid_device *dev, unsigned char 
 	dev->read_pending = FALSE;
 
 	if (res && bytes_read > 0) {
-		if (dev->read_buf[0] == 0x0) {
-			/* If report numbers aren't being used, but Windows sticks a report
-			   number (0x0) on the beginning of the report anyway. To make this
-			   work like the other platforms, and to make it work more like the
-			   HID spec, we'll skip over this byte. */
-			bytes_read--;
-			copy_len = length > bytes_read ? bytes_read : length;
-			memcpy(data, dev->read_buf+1, copy_len);
-		}
-		else {
-			/* Copy the whole buffer, report number and all. */
-			copy_len = length > bytes_read ? bytes_read : length;
-			memcpy(data, dev->read_buf, copy_len);
-		}
+		/* Copy the whole buffer, report number and all. */
+		copy_len = length > bytes_read ? bytes_read : length;
+		memcpy(data, dev->read_buf, copy_len);
 	}
 	
 end_of_function:
@@ -1001,6 +994,11 @@ HID_API_EXPORT const wchar_t * HID_API_CALL  hid_error(hid_device *dev)
 
 HANDLE HID_API_EXPORT get_device_handle(hid_device *dev){
     return dev->device_handle;
+}
+
+PHIDP_PREPARSED_DATA get_preparsed_data(hid_device *dev)
+{
+    return dev->preparsed_data;
 }
 
 
