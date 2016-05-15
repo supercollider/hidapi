@@ -249,7 +249,6 @@ struct hid_device_ {
 		BOOL read_pending;
 		char *read_buf;
 		OVERLAPPED ol;
-        PHIDP_PREPARSED_DATA preparsed_data;
 };
 
 static hid_device *new_hid_device()
@@ -704,7 +703,6 @@ HID_API_EXPORT hid_device* HID_API_CALL hid_open_path(const char *path)
 		register_error(dev, "HidD_GetPreparsedData");
 		goto err;
 	}
-    dev->preparsed_data = pp_data;
 
 	nt_res = HidP_GetCaps(pp_data, &caps);
 	if (nt_res != HIDP_STATUS_SUCCESS) {
@@ -995,12 +993,6 @@ HID_API_EXPORT const wchar_t * HID_API_CALL  hid_error(hid_device *dev)
 HANDLE HID_API_EXPORT get_device_handle(hid_device *dev){
     return dev->device_handle;
 }
-
-PHIDP_PREPARSED_DATA get_preparsed_data(hid_device *dev)
-{
-    return dev->preparsed_data;
-}
-
 
 
 /*#define PICPGM*/
