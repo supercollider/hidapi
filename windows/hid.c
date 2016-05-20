@@ -807,7 +807,7 @@ int HID_API_EXPORT HID_API_CALL hid_read_timeout(hid_device *dev, unsigned char 
             if (GetLastError() != ERROR_IO_PENDING) {
                 /* ReadFile() has failed.
                    Clean up and return error. */
-                CancelIoEx(dev->device_handle);
+                CancelIo(dev->device_handle);
                 dev->read_pending = FALSE;
                 goto end_of_function;
             }
