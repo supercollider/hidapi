@@ -38,16 +38,11 @@ typedef LONG NTSTATUS;
 #define _wcsdup wcsdup
 #endif
 
-/*#define HIDAPI_USE_DDK*/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 	#include <setupapi.h>
 	#include <winioctl.h>
-	#ifdef HIDAPI_USE_DDK
-		#include <hidsdi.h>
-	#endif
 
 	/* Copied from inc/ddk/hidclass.h, part of the Windows DDK. */
 	#define HID_OUT_CTL_CODE(id)  \
@@ -72,172 +67,6 @@ extern "C" {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#if 0
-	/* Since we're not building with the DDK, and the HID header
-	   files aren't part of the SDK, we have to define all this
-	   stuff here. In lookup_functions(), the function pointers
-	   defined below are set. */
-	typedef struct _HIDD_ATTRIBUTES{
-		ULONG Size;
-		USHORT VendorID;
-		USHORT ProductID;
-		USHORT VersionNumber;
-	} HIDD_ATTRIBUTES, *PHIDD_ATTRIBUTES;
-
-	typedef USHORT USAGE;
-	typedef struct _HIDP_CAPS {
-		USAGE Usage;
-		USAGE UsagePage;
-		USHORT InputReportByteLength;
-		USHORT OutputReportByteLength;
-		USHORT FeatureReportByteLength;
-		USHORT Reserved[17];
-		USHORT fields_not_used_by_hidapi[10];
-	} HIDP_CAPS, *PHIDP_CAPS;
-	typedef void* PHIDP_PREPARSED_DATA;
-
-    typedef enum _HIDP_REPORT_TYPE {
-        HidP_Input,
-        HidP_Output,
-        HidP_Feature
-    } HIDP_REPORT_TYPE;
-
-typedef struct _HIDP_BUTTON_CAPS {
-  USAGE   UsagePage;
-  UCHAR   ReportID;
-  BOOLEAN IsAlias;
-  USHORT  BitField;
-  USHORT  LinkCollection;
-  USAGE   LinkUsage;
-  USAGE   LinkUsagePage;
-  BOOLEAN IsRange;
-  BOOLEAN IsStringRange;
-  BOOLEAN IsDesignatorRange;
-  BOOLEAN IsAbsolute;
-  ULONG   Reserved[10];
-  union {
-    struct {
-      USAGE  UsageMin;
-      USAGE  UsageMax;
-      USHORT StringMin;
-      USHORT StringMax;
-      USHORT DesignatorMin;
-      USHORT DesignatorMax;
-      USHORT DataIndexMin;
-      USHORT DataIndexMax;
-    } Range;
-    struct {
-      USAGE  Usage;
-      USAGE  Reserved1;
-      USHORT StringIndex;
-      USHORT Reserved2;
-      USHORT DesignatorIndex;
-      USHORT Reserved3;
-      USHORT DataIndex;
-      USHORT Reserved4;
-    } NotRange;
-  };
-} HIDP_BUTTON_CAPS, *PHIDP_BUTTON_CAPS;
-
-
-typedef struct _HIDP_VALUE_CAPS {
-    USAGE   UsagePage;
-    UCHAR   ReportID;
-    BOOLEAN IsAlias;
-    USHORT  BitField;
-    USHORT  LinkCollection;
-    USAGE   LinkUsage;
-    USAGE   LinkUsagePage;
-    BOOLEAN IsRange;
-    BOOLEAN IsStringRange;
-    BOOLEAN IsDesignatorRange;
-    BOOLEAN IsAbsolute;
-    BOOLEAN HasNull;
-    UCHAR   Reserved;
-    USHORT  BitSize;
-    USHORT  ReportCount;
-    USHORT  Reserved2[5];
-    ULONG   UnitsExp;
-    ULONG   Units;
-    LONG    LogicalMin;
-    LONG    LogicalMax;
-    LONG    PhysicalMin;
-    LONG    PhysicalMax;
-    union {
-        struct {
-            USAGE  UsageMin;
-            USAGE  UsageMax;
-            USHORT StringMin;
-            USHORT StringMax;
-            USHORT DesignatorMin;
-            USHORT DesignatorMax;
-            USHORT DataIndexMin;
-            USHORT DataIndexMax;
-        } Range;
-        struct {
-            USAGE  Usage;
-            USAGE  Reserved1;
-            USHORT StringIndex;
-            USHORT Reserved2;
-            USHORT DesignatorIndex;
-            USHORT Reserved3;
-            USHORT DataIndex;
-            USHORT Reserved4;
-        } NotRange;
-    };
-} HIDP_VALUE_CAPS, *PHIDP_VALUE_CAPS;
-
-typedef struct _HIDP_LINK_COLLECTION_NODE {
-  USAGE  LinkUsage;
-  USAGE  LinkUsagePage;
-  USHORT Parent;
-  USHORT NumberOfChildren;
-  USHORT NextSibling;
-  USHORT FirstChild;
-  ULONG  CollectionType  :8;
-  ULONG  IsAlias  :1;
-  ULONG  Reserved  :23;
-  PVOID  UserContext;
-} HIDP_LINK_COLLECTION_NODE, *PHIDP_LINK_COLLECTION_NODE;
-
-	#define HIDP_STATUS_SUCCESS 0x110000
-
-	typedef BOOLEAN (__stdcall *HidD_GetAttributes_)(HANDLE device, PHIDD_ATTRIBUTES attrib);
-	typedef BOOLEAN (__stdcall *HidD_GetSerialNumberString_)(HANDLE device, PVOID buffer, ULONG buffer_len);
-	typedef BOOLEAN (__stdcall *HidD_GetManufacturerString_)(HANDLE handle, PVOID buffer, ULONG buffer_len);
-	typedef BOOLEAN (__stdcall *HidD_GetProductString_)(HANDLE handle, PVOID buffer, ULONG buffer_len);
-	typedef BOOLEAN (__stdcall *HidD_SetFeature_)(HANDLE handle, PVOID data, ULONG length);
-	typedef BOOLEAN (__stdcall *HidD_GetFeature_)(HANDLE handle, PVOID data, ULONG length);
-	typedef BOOLEAN (__stdcall *HidD_GetIndexedString_)(HANDLE handle, ULONG string_index, PVOID buffer, ULONG buffer_len);
-	typedef BOOLEAN (__stdcall *HidD_GetPreparsedData_)(HANDLE handle, PHIDP_PREPARSED_DATA *preparsed_data);
-	typedef BOOLEAN (__stdcall *HidD_FreePreparsedData_)(PHIDP_PREPARSED_DATA preparsed_data);
-	typedef NTSTATUS (__stdcall *HidP_GetCaps_)(PHIDP_PREPARSED_DATA preparsed_data, HIDP_CAPS *caps);
-	typedef BOOLEAN (__stdcall *HidD_SetNumInputBuffers_)(HANDLE handle, ULONG number_buffers);
-
-    typedef NTSTATUS (__stdcall *HidP_GetLinkCollectionNodes_)( PHIDP_LINK_COLLECTION_NODE link_collection_nodes, PULONG link_collection_nodes_length, PHIDP_PREPARSED_DATA preparsed_data);
-    typedef NTSTATUS (__stdcall *HidP_GetButtonCaps_)( HIDP_REPORT_TYPE report_type, PHIDP_BUTTON_CAPS button_caps, PUSHORT button_caps_length, PHIDP_PREPARSED_DATA preparsed_data );
-    typedef NTSTATUS (__stdcall *HidP_GetValueCaps_)( HIDP_REPORT_TYPE report_type, PHIDP_VALUE_CAPS value_caps, PUSHORT ValueCapsLength, PHIDP_PREPARSED_DATA preparsed_data );
-
-	static HidD_GetAttributes_ HidD_GetAttributes;
-	static HidD_GetSerialNumberString_ HidD_GetSerialNumberString;
-	static HidD_GetManufacturerString_ HidD_GetManufacturerString;
-	static HidD_GetProductString_ HidD_GetProductString;
-	static HidD_SetFeature_ HidD_SetFeature;
-	static HidD_GetFeature_ HidD_GetFeature;
-	static HidD_GetIndexedString_ HidD_GetIndexedString;
-	static HidD_GetPreparsedData_ HidD_GetPreparsedData;
-	static HidD_FreePreparsedData_ HidD_FreePreparsedData;
-	static HidP_GetCaps_ HidP_GetCaps;
-	static HidD_SetNumInputBuffers_ HidD_SetNumInputBuffers;
-
-    static HidP_GetLinkCollectionNodes_ HidP_GetLinkCollectionNodes;
-    static HidP_GetButtonCaps_ HidP_GetButtonCaps;
-    static HidP_GetValueCaps_ HidP_GetValueCaps;
-
-	static HMODULE lib_handle = NULL;
-	static BOOLEAN initialized = FALSE;
-#endif /* HIDAPI_USE_DDK */
 
 struct hid_device_ {
 		HANDLE device_handle;
@@ -307,36 +136,6 @@ static void register_error(hid_device *device, const char *op)
 	device->last_error_str = msg;
 }
 
-#if 0 HIDAPI_USE_DDK
-static int lookup_functions()
-{
-	lib_handle = LoadLibraryA("hid.dll");
-	if (lib_handle) {
-#define RESOLVE(x) x = (x##_)GetProcAddress(lib_handle, #x); if (!x) return -1;
-		RESOLVE(HidD_GetAttributes);
-		RESOLVE(HidD_GetSerialNumberString);
-		RESOLVE(HidD_GetManufacturerString);
-		RESOLVE(HidD_GetProductString);
-		RESOLVE(HidD_SetFeature);
-		RESOLVE(HidD_GetFeature);
-		RESOLVE(HidD_GetIndexedString);
-		RESOLVE(HidD_GetPreparsedData);
-		RESOLVE(HidD_FreePreparsedData);
-		RESOLVE(HidP_GetCaps);
-		RESOLVE(HidD_SetNumInputBuffers);
-
-        RESOLVE(HidP_GetLinkCollectionNodes);
-        RESOLVE(HidP_GetButtonCaps);
-        RESOLVE(HidP_GetValueCaps);
-#undef RESOLVE
-	}
-	else
-		return -1;
-
-	return 0;
-}
-#endif
-
 static HANDLE open_device(const char *path, BOOL enumerate)
 {
 	HANDLE handle;
@@ -358,26 +157,11 @@ static HANDLE open_device(const char *path, BOOL enumerate)
 
 int HID_API_EXPORT hid_init(void)
 {
-#if 0 HIDAPI_USE_DDK
-	if (!initialized) {
-		if (lookup_functions() < 0) {
-			hid_exit();
-			return -1;
-		}
-		initialized = TRUE;
-	}
-#endif
 	return 0;
 }
 
 int HID_API_EXPORT hid_exit(void)
 {
-#if 0 HIDAPI_USE_DDK
-	if (lib_handle)
-		FreeLibrary(lib_handle);
-	lib_handle = NULL;
-	initialized = FALSE;
-#endif
 	return 0;
 }
 
