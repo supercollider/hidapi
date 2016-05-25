@@ -110,7 +110,11 @@ if( HID_EXAMPLE_OSC )
 endif()
 
 if( HID_DEBUG_PARSER OR HID_INSTALL_HUT )
-  set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${auxresourcesdir}/HID_Support" CACHE STRING "Installation path for the HID usage tables")
+  if(APPLE)
+    set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${scappauxresourcesdir}/HID_Support" CACHE STRING "Installation path for the HID usage tables")
+  else(APPLE)
+    set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${auxresourcesdir}/HID_Support" CACHE STRING "Installation path for the HID usage tables")
+  endif(APPLE)
   install(DIRECTORY hut
   DESTINATION ${HID_HUT_PATH}
   FILES_MATCHING PATTERN "*.yaml"
