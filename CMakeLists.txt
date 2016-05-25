@@ -20,7 +20,7 @@ option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
 option(HID_EXAMPLE_TEST "build test example" OFF)
 option(HID_EXAMPLE_OSC "build osc example" OFF)
 
-option(HID_INSTALL_HUT "install hid usage tables" OFF)
+option(HID_INSTALL_HUT "install hid usage tables" ON)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
@@ -109,11 +109,10 @@ if( HID_EXAMPLE_OSC )
   add_subdirectory(hidapi2osc)
 endif()
 
-if( HID_DEBUG_PARSER )
-  set(HID_HUT_PATH ${CMAKE_INSTALL_PREFIX}/share/hidapi CACHE STRING "Installation path for the HID usage tables")
-
+if( HID_DEBUG_PARSER OR HID_INSTALL_HUT )
+  set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${auxresourcesdir}/hidapi" CACHE STRING "Installation path for the HID usage tables")
   install(DIRECTORY hut
-	DESTINATION ${HID_HUT_PATH}
-	FILES_MATCHING PATTERN "*.yaml"
+  DESTINATION ${HID_HUT_PATH}
+  FILES_MATCHING PATTERN "*.yaml"
   )
 endif()
