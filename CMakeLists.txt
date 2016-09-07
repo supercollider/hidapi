@@ -20,7 +20,7 @@ option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
 option(HID_EXAMPLE_TEST "build test example" OFF)
 option(HID_EXAMPLE_OSC "build osc example" OFF)
 
-option(HID_INSTALL_HUT "install hid usage tables" OFF)
+option(HID_INSTALL_HUT "install hid usage tables" ON)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(HIDAPI "default" CACHE STRING "HID API to use (one of {default,hidraw,libusb})")
@@ -100,17 +100,38 @@ if( HID_EXAMPLE_TEST )
   if(APPLE)
     add_subdirectory(hidtestosx)
   endif()
+  if(WIN32)
+    add_subdirectory(hidtestwindows)
+  endif()
 endif()
 
 if( HID_EXAMPLE_OSC )
   add_subdirectory(hidapi2osc)
 endif()
 
-if( HID_DEBUG_PARSER )
-  set(HID_HUT_PATH ${CMAKE_INSTALL_PREFIX}/share/hidapi CACHE STRING "Installation path for the HID usage tables")
-
+if( HID_DEBUG_PARSER OR HID_INSTALL_HUT )
+  # provisional to avoid having to commit to sc master while the HID submodule
+  # is not final/added to master
+  # the sc-settings for cmake_install_prefix and scappauxresourcesdir are not
+  # visible in this scope
+  if(APPLE)
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/Install")
+    endif()
+    # this will break if scappbundlename is reassigned in SC
+    # similar problem in editors/sc-ide/CMakeLists.txt 284
+    set(scappbundlename "SuperCollider")
+    set(scappauxresourcesdir "${scappbundlename}/${scappbundlename}.app/Contents/Resources")
+    set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${scappauxresourcesdir}/HID_Support")
+  elseif(WIN32)
+    set(auxresourcesdir "SuperCollider" CACHE STRING "Resources directory")
+    set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${auxresourcesdir}/HID_Support")
+  else()
+    set(auxresourcesdir "share/SuperCollider" CACHE STRING "Resources directory")
+    set(HID_HUT_PATH "${CMAKE_INSTALL_PREFIX}/${auxresourcesdir}/HID_Support")
+  endif(APPLE)
   install(DIRECTORY hut
-	DESTINATION ${HID_HUT_PATH}
-	FILES_MATCHING PATTERN "*.yaml"
+  DESTINATION ${HID_HUT_PATH}
+  FILES_MATCHING PATTERN "*.yaml"
   )
 endif()

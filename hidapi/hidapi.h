@@ -429,6 +429,9 @@ extern "C" {
 		int HID_API_EXPORT HID_API_CALL hid_dump_element_info(hid_device *dev);
 		IOHIDDeviceRef HID_API_EXPORT HID_API_CALL get_device_handle( hid_device *dev );
 #endif
+#ifdef WIN32
+        HANDLE HID_API_EXPORT HID_API_CALL get_device_handle(hid_device *dev);
+#endif
 
 #ifdef __cplusplus
 }
