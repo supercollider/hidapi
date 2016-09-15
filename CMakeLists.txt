@@ -3,7 +3,6 @@ if(${CMAKE_MAJOR_VERSION} GREATER 2)
   cmake_policy(SET CMP0048 OLD)
 endif(${CMAKE_MAJOR_VERSION} GREATER 2)
 
-cmake_policy(SET CMP0048 OLD)
 project(hidapi)
 
 set(VERSION_MAJOR "0")
