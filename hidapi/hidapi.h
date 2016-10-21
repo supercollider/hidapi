@@ -430,6 +430,7 @@ extern "C" {
 		IOHIDDeviceRef HID_API_EXPORT HID_API_CALL get_device_handle( hid_device *dev );
 #endif
 #ifdef WIN32
+    #include <windows.h>
         HANDLE HID_API_EXPORT HID_API_CALL get_device_handle(hid_device *dev);
 #endif
 
