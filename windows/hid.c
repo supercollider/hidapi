@@ -21,12 +21,7 @@
 ********************************************************/
 
 #include <windows.h>
-
-#ifdef __MINGW32__
-#include "./hidsdi.h"
-#else
 #include <hidsdi.h>
-#endif
 
 #ifndef _NTDEF_
 typedef LONG NTSTATUS;
@@ -35,6 +30,7 @@ typedef LONG NTSTATUS;
 #ifdef __MINGW32__
 #include <ntdef.h>
 #include <winbase.h>
+#include <devpropdef.h>
 #endif
 
 #ifdef __CYGWIN__
