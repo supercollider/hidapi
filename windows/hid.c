@@ -21,6 +21,9 @@
 ********************************************************/
 
 #include <windows.h>
+// for MinGW < 5.3 include locally provided "../windows hidsdi.h" rather
+// than #include <hidsdi.h>:
+// #include "./hidsdi.h"
 #include <hidsdi.h>
 
 #ifndef _NTDEF_
