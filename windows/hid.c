@@ -21,12 +21,10 @@
 ********************************************************/
 
 #include <windows.h>
-
-#ifdef __MINGW32__
-#include "./hidsdi.h"
-#else
+// for MinGW < 5.3 include locally provided "../windows hidsdi.h" rather
+// than #include <hidsdi.h>:
+// #include "./hidsdi.h"
 #include <hidsdi.h>
-#endif
 
 #ifndef _NTDEF_
 typedef LONG NTSTATUS;
@@ -35,6 +33,7 @@ typedef LONG NTSTATUS;
 #ifdef __MINGW32__
 #include <ntdef.h>
 #include <winbase.h>
+#include <devpropdef.h>
 #endif
 
 #ifdef __CYGWIN__
