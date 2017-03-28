@@ -263,9 +263,7 @@ int hid_element_get_signed_value( int inputvalue, int bytesize ){
   if ( signBit & inputvalue ){
     unsigned int bitMask = BITMASK1( bytesize*8 );
     unsigned int uvalue = (unsigned int) inputvalue;
-    unsigned int negvalue = ~(uvalue);
-    negvalue = ~(uvalue) & bitMask;
-    negvalue = negvalue + 1;
+    unsigned int negvalue = (~(uvalue) & bitMask) + 1;
     outputvalue = -1 * negvalue;
   } else {
     outputvalue = inputvalue;
@@ -289,7 +287,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 //  int current_report_size;
 
   int current_usage_min = -1;
-  int current_usage_max = -1;
+//  int current_usage_max = -1;
 
   int current_report_count = 0;
 
@@ -344,7 +342,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		  case HID_USAGE:
 		    making_element->usage = next_val;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    current_usages[ current_usage_index ] = next_val;
 #ifdef DEBUG_PARSER
 		    printf("\n\tusage: 0x%02hhx, %i", current_usages[ current_usage_index ], current_usage_index );
@@ -390,10 +388,10 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 #endif
 		    break;
 		  case HID_USAGE_MAX:
-		    current_usage_max = next_val;
+//		    current_usage_max = next_val;
 		    making_element->usage_max = next_val;
 #ifdef DEBUG_PARSER
-		    printf("\n\tusage max: %i", current_usage_max);
+		    printf("\n\tusage max: %i", next_val);
 #endif
 		    break;
 		  case HID_LOGICAL_MIN:
@@ -523,7 +521,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		    }
 		    current_usage_index = 0;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    making_element->usage_min = -1;
 		    making_element->usage_max = -1;
 		    making_element->usage = 0;
@@ -580,7 +578,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		    }
 		    current_usage_index = 0;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    making_element->usage_min = -1;
 		    making_element->usage_max = -1;
 		    making_element->usage = 0;
@@ -627,7 +625,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		    }
 		    current_usage_index = 0;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    making_element->usage_min = -1;
 		    making_element->usage_max = -1;
 		    making_element->usage = 0;
@@ -659,7 +657,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 	      making_element->usage_max = -1;
 	      current_usage_index = 0;
 	      current_usage_min = -1;
-	      current_usage_max = -1;
+//	      current_usage_max = -1;
 	      collection_nesting--;
 #ifdef DEBUG_PARSER
 	      printf("\n\tend collection: %i, %i\n", collection_nesting, descr_buf[i] );
@@ -683,6 +681,8 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 #ifdef DEBUG_PARSER
   printf("----------- end parsing report descriptor --------------\n " );
 #endif
+
+  hid_free_element( making_element );
 
   device_desc->number_of_reports = numreports;
   device_desc->report_lengths = (int*) malloc( sizeof( int ) * numreports );
@@ -709,9 +709,7 @@ void hid_element_set_value_from_input( struct hid_device_element * element, int 
         if (signBit & value){
             unsigned int bitMask = BITMASK1(element->report_size);
             unsigned int uvalue = (unsigned int)value;
-            unsigned int negvalue = ~(uvalue);
-            negvalue = ~(uvalue)& bitMask;
-            negvalue = negvalue + 1;
+            unsigned int negvalue = (~(uvalue) & bitMask) + 1;
             element->value = -1 * negvalue;
         }
         else {
@@ -1211,6 +1209,7 @@ struct hid_dev_desc * hid_open_device(  unsigned short vendor, unsigned short pr
 //     havenotfound = wcscmp(serial_number, newinfo->serial_number) == 0;
 //   }
   if ( newinfo == NULL ){
+    free( newdesc );
     hid_close( handle );
     return NULL;
   }
