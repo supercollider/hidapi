@@ -1915,44 +1915,51 @@ void hid_parse_element_info( struct hid_dev_desc * devdesc )
 	      new_element->type += type;
 	      type = ((int) hasNullState) << 6;
 	      new_element->type += type;
+
 	      switch (tIOHIDElementType) {
-		case kIOHIDElementTypeInput_Misc:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: Misc, ");
-		  break;
-		}
-		case kIOHIDElementTypeInput_Button:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: Button, ");
-		  break;
-		}
-		case kIOHIDElementTypeInput_Axis:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: Axis, ");
-		  break;
-		}
-		case kIOHIDElementTypeInput_ScanCodes:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: ScanCodes, ");
-		  break;
-		}
-		case kIOHIDElementTypeOutput:
-		{
-		  new_element->io_type = 2;
-// 		  printf("type: Output, ");
-		  break;
-		}
-		case kIOHIDElementTypeFeature:
-		{
-		  new_element->io_type = 3;
-// 		  printf("type: Feature, ");
-		  break;
-		}
-	      }
+          case kIOHIDElementTypeInput_Misc:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: Misc, ");
+            break;
+          }
+          case kIOHIDElementTypeInput_Button:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: Button, ");
+            break;
+          }
+          case kIOHIDElementTypeInput_Axis:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: Axis, ");
+            break;
+          }
+          case kIOHIDElementTypeInput_ScanCodes:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: ScanCodes, ");
+            break;
+          }
+          case kIOHIDElementTypeOutput:
+          {
+            new_element->io_type = 2;
+            // 		  printf("type: Output, ");
+            break;
+          }
+          case kIOHIDElementTypeFeature:
+          {
+            new_element->io_type = 3;
+            // 		  printf("type: Feature, ");
+            break;
+          }
+          default:
+          {
+            printf("hidapi_parser: unknown kIOHIDElementType found.");
+            break;
+          }
+        }
+
 	      new_element->parent_collection = parent_collection;
 	      new_element->usage_page = usagePage;
 	      new_element->usage = usage;
