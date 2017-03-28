@@ -460,7 +460,7 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 		if ((vendor_id == 0x0 || vendor_id == dev_vid) &&
 		    (product_id == 0x0 || product_id == dev_pid)) {
 			struct hid_device_info *tmp;
-			size_t len;
+			//size_t len;
 
 			/* VID/PID match. Create the record. */
 			tmp = malloc(sizeof(struct hid_device_info));
@@ -733,6 +733,7 @@ hid_device * HID_API_EXPORT hid_open_path(const char *path)
 
 				/* Create the buffers for receiving data */
 				dev->max_input_report_len = (CFIndex) get_max_report_length(os_dev);
+				assert(dev->max_input_report_len > 0);
 				dev->input_report_buf = calloc(dev->max_input_report_len, sizeof(uint8_t));
 
 				/* Create the Run Loop Mode for this device.
