@@ -284,7 +284,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 
   int current_usages[256];
   int current_usage_index = 0;
-  int current_report_size;
+//  int current_report_size;
 
   int current_usage_min = -1;
   int current_usage_max = -1;
@@ -300,10 +300,10 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
   int next_byte_type = 0;
   int next_val = 0;
 
-  unsigned char toadd = 0;
+//  unsigned char toadd = 0;
   int byte_count = 0;
 
-  int i,j;
+  int i, j, k, index;
 
   int numreports = 1;
   int report_lengths[256];
@@ -311,20 +311,17 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
   report_ids[0] = 0;
   report_lengths[0] = 0;
 
-  int k;
-  int index;
-
   device_collection->num_collections = 0;
   device_collection->num_elements = 0;
 #ifdef DEBUG_PARSER
   printf("----------- parsing report descriptor --------------\n " );
 #endif
-  for ( i = 0; i < size; i++){
+  for ( i = 0; i < size; i++) {
 #ifdef DEBUG_PARSER
 	  printf("\nbuffer value: %02hhx ", descr_buf[i]);
 	  printf("\tbyte_type %i, %i, %i \t", next_byte_tag, next_byte_size, next_val);
 #endif
-	  if ( next_byte_tag != -1 ){
+	  if ( next_byte_tag != -1 ) {
 // 	      unsigned char ubyte = (unsigned char) descr_buf[i];
 // 	      char sbyte = descr_buf[i]; // descr_buf is signed already
 	      int shift = byte_count*8;
@@ -991,7 +988,7 @@ int hid_send_output_report( struct hid_dev_desc * devd, int reportid ){
   buf[0] = reportid;
   int byte_index = 1;
   int bit_offset = 0;
-  int next_val = 0;
+//  int next_val = 0;
 
 
   while ( cur_element != NULL && (byte_index < buflength) ){
@@ -1062,9 +1059,9 @@ int hid_send_output_report_old( struct hid_dev_desc * devd, int reportid ){
   // and set their output values to the buffer
 
   int next_byte_size;
-  int next_mod_bit_size;
+//  int next_mod_bit_size;
   int byte_count = 0;
-  int next_val = 0;
+//  int next_val = 0;
 
   struct hid_device_collection * device_collection = devd->device_collection;
   struct hid_device_element * cur_element = device_collection->first_element;
@@ -1768,9 +1765,9 @@ int hid_send_element_output( struct hid_dev_desc * devdesc, struct hid_device_el
 int hid_parse_input_elements_values( unsigned char* buf, struct hid_dev_desc * devdesc ){
   struct hid_device_collection * device_collection = devdesc->device_collection;
   struct hid_device_element * cur_element = device_collection->first_element;
-  int i=0;
+//  int i=0;
   int newvalue;
-  int reportid = 0;
+//  int reportid = 0;
 
   IOHIDDeviceRef device_handle = get_device_handle( devdesc->device );
   IOHIDValueRef newValueRef;
