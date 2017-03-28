@@ -285,7 +285,7 @@ static int get_string_property_utf8(IOHIDDeviceRef device, CFStringRef prop, cha
 
 	str = IOHIDDeviceGetProperty(device, prop);
 
-	buf[0] = 0;
+	buf[0] = '\0';
 
 	if (str) {
 		len--;
@@ -295,8 +295,7 @@ static int get_string_property_utf8(IOHIDDeviceRef device, CFStringRef prop, cha
 		range.location = 0;
 		range.length = str_len;
 		CFIndex used_buf_len;
-		CFIndex chars_copied;
-		chars_copied = CFStringGetBytes(str,
+		CFStringGetBytes(str,
 			range,
 			kCFStringEncodingUTF8,
 			(char)'?',
@@ -306,9 +305,9 @@ static int get_string_property_utf8(IOHIDDeviceRef device, CFStringRef prop, cha
 			&used_buf_len);
 
 		if (used_buf_len == len)
-			buf[len] = 0; /* len is decremented above */
+			buf[len] = '\0'; /* len is decremented above */
 		else
-			buf[used_buf_len] = 0;
+			buf[used_buf_len] = '\0';
 
 		return used_buf_len;
 	}
