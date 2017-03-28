@@ -160,6 +160,7 @@ struct hid_device_element * hid_new_element(){
   element->index = -1;
   element->repeat = 0;
 
+  element->usage_page = 0;
   element->usage_min = 0;
   element->usage_max = 0;
   element->logical_min = 0;
