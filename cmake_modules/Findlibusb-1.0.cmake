@@ -43,13 +43,25 @@
 #
 
 
+if(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  # Remove prefix "1" as FreeBSD has its own implementation
+  # of libusb compatible with libusb1.
+  set(LIBUSB_1_HEADER_NAME "libusb.h")
+  set(LIBUSB_1_LIBRARY_NAME "usb")
+else(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  # Just preserve values before my intrusion. 10.04.2017 Vasily
+  # Can it be just "libusb.h" for Linux also?
+  set(LIBUSB_1_HEADER_NAME "libusb-1.0/libusb.h")
+  set(LIBUSB_1_LIBRARY_NAME "usb-1.0")
+endif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+
 if (LIBUSB_1_LIBRARIES AND LIBUSB_1_INCLUDE_DIRS)
   # in cache already
   set(LIBUSB_FOUND TRUE)
 else (LIBUSB_1_LIBRARIES AND LIBUSB_1_INCLUDE_DIRS)
   find_path(LIBUSB_1_INCLUDE_DIR
     NAMES
-	libusb-1.0/libusb.h
+	${LIBUSB_1_HEADER_NAME}
     PATHS
       /usr/include
       /usr/local/include
@@ -61,7 +73,7 @@ else (LIBUSB_1_LIBRARIES AND LIBUSB_1_INCLUDE_DIRS)
 
   find_library(LIBUSB_1_LIBRARY
     NAMES
-      usb-1.0
+      ${LIBUSB_1_LIBRARY_NAME}
     PATHS
       /usr/lib
       /usr/local/lib
