@@ -285,7 +285,7 @@ static int get_string_property_utf8(IOHIDDeviceRef device, CFStringRef prop, cha
 
 	str = IOHIDDeviceGetProperty(device, prop);
 
-	buf[0] = 0;
+	buf[0] = '\0';
 
 	if (str) {
 		len--;
@@ -295,8 +295,7 @@ static int get_string_property_utf8(IOHIDDeviceRef device, CFStringRef prop, cha
 		range.location = 0;
 		range.length = str_len;
 		CFIndex used_buf_len;
-		CFIndex chars_copied;
-		chars_copied = CFStringGetBytes(str,
+		CFStringGetBytes(str,
 			range,
 			kCFStringEncodingUTF8,
 			(char)'?',
@@ -306,9 +305,9 @@ static int get_string_property_utf8(IOHIDDeviceRef device, CFStringRef prop, cha
 			&used_buf_len);
 
 		if (used_buf_len == len)
-			buf[len] = 0; /* len is decremented above */
+			buf[len] = '\0'; /* len is decremented above */
 		else
-			buf[used_buf_len] = 0;
+			buf[used_buf_len] = '\0';
 
 		return used_buf_len;
 	}
@@ -461,7 +460,7 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 		if ((vendor_id == 0x0 || vendor_id == dev_vid) &&
 		    (product_id == 0x0 || product_id == dev_pid)) {
 			struct hid_device_info *tmp;
-			size_t len;
+			//size_t len;
 
 			/* VID/PID match. Create the record. */
 			tmp = malloc(sizeof(struct hid_device_info));
@@ -479,7 +478,7 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 
 			/* Fill out the record */
 			cur_dev->next = NULL;
-			len = make_path(dev, cbuf, sizeof(cbuf));
+			/*len =*/ make_path(dev, cbuf, sizeof(cbuf));
 			cur_dev->path = strdup(cbuf);
 
 			/* Serial Number */
@@ -502,9 +501,9 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 			/* Interface Number (Unsupported on Mac)*/
 			cur_dev->interface_number = -1;
 
-			CFDataRef ref;
+			//CFDataRef ref;
 			CFStringRef prop = CFSTR(kIOHIDReportDescriptorKey);
-			ref = IOHIDDeviceGetProperty(dev, prop);
+			/*ref =*/ IOHIDDeviceGetProperty(dev, prop);
 			//hid_get_report_descriptor(dev,buf, BUF_LEN);
 		}
 	}
@@ -717,10 +716,10 @@ hid_device * HID_API_EXPORT hid_open_path(const char *path)
 	CFSetGetValues(device_set, (const void **) device_array);
 	for (i = 0; i < num_devices; i++) {
 		char cbuf[BUF_LEN];
-		size_t len;
+		//size_t len;
 		IOHIDDeviceRef os_dev = device_array[i];
 
-		len = make_path(os_dev, cbuf, sizeof(cbuf));
+		/*len =*/ make_path(os_dev, cbuf, sizeof(cbuf));
 		if (!strcmp(cbuf, path)) {
 			/* Matched Paths. Open this Device. */
 			IOReturn ret = IOHIDDeviceOpen(os_dev, kIOHIDOptionsTypeSeizeDevice);
@@ -734,6 +733,7 @@ hid_device * HID_API_EXPORT hid_open_path(const char *path)
 
 				/* Create the buffers for receiving data */
 				dev->max_input_report_len = (CFIndex) get_max_report_length(os_dev);
+				assert(dev->max_input_report_len > 0);
 				dev->input_report_buf = calloc(dev->max_input_report_len, sizeof(uint8_t));
 
 				/* Create the Run Loop Mode for this device.

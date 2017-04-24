@@ -160,12 +160,15 @@ struct hid_device_element * hid_new_element(){
   element->index = -1;
   element->repeat = 0;
 
+  element->usage = -1;
+  element->usage_page = 0;
   element->usage_min = 0;
   element->usage_max = 0;
   element->logical_min = 0;
   element->logical_max = 0;
   element->phys_min = 0;
   element->phys_max = 0;
+  element->report_size = 0;
   element->report_id = 0;
   element->unit = 0;
   element->unit_exponent = 0;
@@ -260,9 +263,7 @@ int hid_element_get_signed_value( int inputvalue, int bytesize ){
   if ( signBit & inputvalue ){
     unsigned int bitMask = BITMASK1( bytesize*8 );
     unsigned int uvalue = (unsigned int) inputvalue;
-    unsigned int negvalue = ~(uvalue);
-    negvalue = ~(uvalue) & bitMask;
-    negvalue = negvalue + 1;
+    unsigned int negvalue = (~(uvalue) & bitMask) + 1;
     outputvalue = -1 * negvalue;
   } else {
     outputvalue = inputvalue;
@@ -283,10 +284,10 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 
   int current_usages[256];
   int current_usage_index = 0;
-  int current_report_size;
+//  int current_report_size;
 
   int current_usage_min = -1;
-  int current_usage_max = -1;
+//  int current_usage_max = -1;
 
   int current_report_count = 0;
 
@@ -299,10 +300,10 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
   int next_byte_type = 0;
   int next_val = 0;
 
-  unsigned char toadd = 0;
+//  unsigned char toadd = 0;
   int byte_count = 0;
 
-  int i,j;
+  int i, j, k, index;
 
   int numreports = 1;
   int report_lengths[256];
@@ -310,20 +311,17 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
   report_ids[0] = 0;
   report_lengths[0] = 0;
 
-  int k;
-  int index;
-
   device_collection->num_collections = 0;
   device_collection->num_elements = 0;
 #ifdef DEBUG_PARSER
   printf("----------- parsing report descriptor --------------\n " );
 #endif
-  for ( i = 0; i < size; i++){
+  for ( i = 0; i < size; i++) {
 #ifdef DEBUG_PARSER
 	  printf("\nbuffer value: %02hhx ", descr_buf[i]);
 	  printf("\tbyte_type %i, %i, %i \t", next_byte_tag, next_byte_size, next_val);
 #endif
-	  if ( next_byte_tag != -1 ){
+	  if ( next_byte_tag != -1 ) {
 // 	      unsigned char ubyte = (unsigned char) descr_buf[i];
 // 	      char sbyte = descr_buf[i]; // descr_buf is signed already
 	      int shift = byte_count*8;
@@ -344,7 +342,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		  case HID_USAGE:
 		    making_element->usage = next_val;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    current_usages[ current_usage_index ] = next_val;
 #ifdef DEBUG_PARSER
 		    printf("\n\tusage: 0x%02hhx, %i", current_usages[ current_usage_index ], current_usage_index );
@@ -390,10 +388,10 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 #endif
 		    break;
 		  case HID_USAGE_MAX:
-		    current_usage_max = next_val;
+//		    current_usage_max = next_val;
 		    making_element->usage_max = next_val;
 #ifdef DEBUG_PARSER
-		    printf("\n\tusage max: %i", current_usage_max);
+		    printf("\n\tusage max: %i", next_val);
 #endif
 		    break;
 		  case HID_LOGICAL_MIN:
@@ -523,7 +521,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		    }
 		    current_usage_index = 0;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    making_element->usage_min = -1;
 		    making_element->usage_max = -1;
 		    making_element->usage = 0;
@@ -580,7 +578,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		    }
 		    current_usage_index = 0;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    making_element->usage_min = -1;
 		    making_element->usage_max = -1;
 		    making_element->usage = 0;
@@ -627,7 +625,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 		    }
 		    current_usage_index = 0;
 		    current_usage_min = -1;
-		    current_usage_max = -1;
+//		    current_usage_max = -1;
 		    making_element->usage_min = -1;
 		    making_element->usage_max = -1;
 		    making_element->usage = 0;
@@ -659,7 +657,7 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 	      making_element->usage_max = -1;
 	      current_usage_index = 0;
 	      current_usage_min = -1;
-	      current_usage_max = -1;
+//	      current_usage_max = -1;
 	      collection_nesting--;
 #ifdef DEBUG_PARSER
 	      printf("\n\tend collection: %i, %i\n", collection_nesting, descr_buf[i] );
@@ -683,6 +681,8 @@ int hid_parse_report_descriptor( unsigned char* descr_buf, int size, struct hid_
 #ifdef DEBUG_PARSER
   printf("----------- end parsing report descriptor --------------\n " );
 #endif
+
+  hid_free_element( making_element );
 
   device_desc->number_of_reports = numreports;
   device_desc->report_lengths = (int*) malloc( sizeof( int ) * numreports );
@@ -709,9 +709,7 @@ void hid_element_set_value_from_input( struct hid_device_element * element, int 
         if (signBit & value){
             unsigned int bitMask = BITMASK1(element->report_size);
             unsigned int uvalue = (unsigned int)value;
-            unsigned int negvalue = ~(uvalue);
-            negvalue = ~(uvalue)& bitMask;
-            negvalue = negvalue + 1;
+            unsigned int negvalue = (~(uvalue) & bitMask) + 1;
             element->value = -1 * negvalue;
         }
         else {
@@ -990,7 +988,7 @@ int hid_send_output_report( struct hid_dev_desc * devd, int reportid ){
   buf[0] = reportid;
   int byte_index = 1;
   int bit_offset = 0;
-  int next_val = 0;
+//  int next_val = 0;
 
 
   while ( cur_element != NULL && (byte_index < buflength) ){
@@ -1061,9 +1059,9 @@ int hid_send_output_report_old( struct hid_dev_desc * devd, int reportid ){
   // and set their output values to the buffer
 
   int next_byte_size;
-  int next_mod_bit_size;
+//  int next_mod_bit_size;
   int byte_count = 0;
-  int next_val = 0;
+//  int next_val = 0;
 
   struct hid_device_collection * device_collection = devd->device_collection;
   struct hid_device_element * cur_element = device_collection->first_element;
@@ -1211,6 +1209,7 @@ struct hid_dev_desc * hid_open_device(  unsigned short vendor, unsigned short pr
 //     havenotfound = wcscmp(serial_number, newinfo->serial_number) == 0;
 //   }
   if ( newinfo == NULL ){
+    free( newdesc );
     hid_close( handle );
     return NULL;
   }
@@ -1767,9 +1766,9 @@ int hid_send_element_output( struct hid_dev_desc * devdesc, struct hid_device_el
 int hid_parse_input_elements_values( unsigned char* buf, struct hid_dev_desc * devdesc ){
   struct hid_device_collection * device_collection = devdesc->device_collection;
   struct hid_device_element * cur_element = device_collection->first_element;
-  int i=0;
+//  int i=0;
   int newvalue;
-  int reportid = 0;
+//  int reportid = 0;
 
   IOHIDDeviceRef device_handle = get_device_handle( devdesc->device );
   IOHIDValueRef newValueRef;
@@ -1917,44 +1916,51 @@ void hid_parse_element_info( struct hid_dev_desc * devdesc )
 	      new_element->type += type;
 	      type = ((int) hasNullState) << 6;
 	      new_element->type += type;
+
 	      switch (tIOHIDElementType) {
-		case kIOHIDElementTypeInput_Misc:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: Misc, ");
-		  break;
-		}
-		case kIOHIDElementTypeInput_Button:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: Button, ");
-		  break;
-		}
-		case kIOHIDElementTypeInput_Axis:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: Axis, ");
-		  break;
-		}
-		case kIOHIDElementTypeInput_ScanCodes:
-		{
-		  new_element->io_type = 1;
-// 		  printf("type: ScanCodes, ");
-		  break;
-		}
-		case kIOHIDElementTypeOutput:
-		{
-		  new_element->io_type = 2;
-// 		  printf("type: Output, ");
-		  break;
-		}
-		case kIOHIDElementTypeFeature:
-		{
-		  new_element->io_type = 3;
-// 		  printf("type: Feature, ");
-		  break;
-		}
-	      }
+          case kIOHIDElementTypeInput_Misc:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: Misc, ");
+            break;
+          }
+          case kIOHIDElementTypeInput_Button:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: Button, ");
+            break;
+          }
+          case kIOHIDElementTypeInput_Axis:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: Axis, ");
+            break;
+          }
+          case kIOHIDElementTypeInput_ScanCodes:
+          {
+            new_element->io_type = 1;
+            // 		  printf("type: ScanCodes, ");
+            break;
+          }
+          case kIOHIDElementTypeOutput:
+          {
+            new_element->io_type = 2;
+            // 		  printf("type: Output, ");
+            break;
+          }
+          case kIOHIDElementTypeFeature:
+          {
+            new_element->io_type = 3;
+            // 		  printf("type: Feature, ");
+            break;
+          }
+          default:
+          {
+            printf("hidapi_parser: unknown kIOHIDElementType found.");
+            break;
+          }
+        }
+
 	      new_element->parent_collection = parent_collection;
 	      new_element->usage_page = usagePage;
 	      new_element->usage = usage;
