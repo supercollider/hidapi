@@ -1954,6 +1954,12 @@ void hid_parse_element_info( struct hid_dev_desc * devdesc )
 // 		  printf("type: Feature, ");
 		  break;
 		}
+		default:
+		{
+		  printf("WARNING: unknown tIOHIDElementType: %d. Defaulting to io_type 1", tIOHIDElementType);
+		  new_element->io_type = 1;
+		  break;
+		}
 	      }
 	      new_element->parent_collection = parent_collection;
 	      new_element->usage_page = usagePage;
