@@ -1956,6 +1956,7 @@ void hid_parse_element_info( struct hid_dev_desc * devdesc )
 		}
 		default:
 		{
+		  // TODO: Handle unknown types
 		  printf("WARNING: unknown tIOHIDElementType: %d. Defaulting to io_type 1", tIOHIDElementType);
 		  new_element->io_type = 1;
 		  break;
