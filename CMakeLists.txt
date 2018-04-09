@@ -1,15 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
-if(${CMAKE_MAJOR_VERSION} GREATER 2)
-  cmake_policy(SET CMP0048 OLD)
-endif(${CMAKE_MAJOR_VERSION} GREATER 2)
+cmake_minimum_required(VERSION 3.0)
 
-project(hidapi)
-
-set(VERSION_MAJOR "0")
-set(VERSION_MINOR "7")
-set(VERSION_PATCH "1")
-set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-
+project(hidapi VERSION 0.7.1)
 
 option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
 
