@@ -411,13 +411,6 @@ int HID_API_EXPORT hid_exit(void)
 	return 0;
 }
 
-static void process_pending_events(void) {
-	SInt32 res;
-	do {
-		res = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.001, FALSE);
-	} while(res != kCFRunLoopRunFinished && res != kCFRunLoopRunTimedOut);
-}
-
 struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, unsigned short product_id)
 {
 	struct hid_device_info *root = NULL; /* return object */
@@ -428,9 +421,6 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 	/* Set up the HID Manager if it hasn't been done */
 	if (hid_init() < 0)
 		return NULL;
-
-	/* give the IOHIDManager a chance to update itself */
-	process_pending_events();
 
 	/* Get a list of the Devices */
 	IOHIDManagerSetDeviceMatching(hid_mgr, NULL);
@@ -706,9 +696,6 @@ hid_device * HID_API_EXPORT hid_open_path(const char *path)
 	/* Set up the HID Manager if it hasn't been done */
 	if (hid_init() < 0)
 		return NULL;
-
-	/* give the IOHIDManager a chance to update itself */
-	process_pending_events();
 
 	CFSetRef device_set = IOHIDManagerCopyDevices(hid_mgr);
 
