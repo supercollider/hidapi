@@ -58,7 +58,7 @@ back-end will support both USB and Bluetooth, it has some limitations on
 kernels prior to 2.6.39, including the inability to send or receive feature
 reports.  In addition, it will only communicate with devices which have
 hidraw nodes associated with them.  Keyboards, mice, and some other devices
-which are blacklisted from having hidraw nodes will not work. Fortunately,
+which are blocked from having hidraw nodes will not work. Fortunately,
 for nearly all the uses of hidraw, this is not a problem.
 
 Linux/FreeBSD/libusb (libusb/hid-libusb.c):
