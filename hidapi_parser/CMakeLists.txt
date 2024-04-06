@@ -1,14 +1,19 @@
 message(STATUS "    hidapi_parser" )
+project(hidapi_parser)
+find_package(hidapi REQUIRED)
+option(HID_DEBUG_PARSER "verbose parser debugging output" OFF)
+option(HID_PARSER_TEST "install hidparsertest" OFF)
+if( HID_DEBUG_PARSER )
+  add_definitions( -DDEBUG_PARSER )
+endif()
 
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  add_definitions( -DLINUX_FREEBSD )
+endif()
 
-# message( "hidapi parser source dir is: ${hidapi_SOURCE_DIR}" )
-#
-# set( hidapi_parser_INCLUDE_DIRS ${hidapi_SOURCE_DIR}/hidapi_parser/)
-# # set( hidapi_LIBS ${UDEV_LIBRARIES})
-# set( hidapi_parser_SRCS hidapi_parser.c )
-#
-# message( "hidapi_parser include dirs are: ${hidapi_parser_INCLUDE_DIRS}" )
+set(SOURCES hidapi_parser.c)
+set(HEADERS hidapi_parser.h)
+add_library( hidapi_parser STATIC ${SOURCES} )
 
-include_directories( ${hidapi_SOURCE_DIR}/hidapi/ )
-add_library( hidapi_parser STATIC hidapi_parser.c )
-target_link_libraries( hidapi )
+target_link_libraries(hidapi_parser hidapi::hidapi)
+target_include_directories(hidapi_parser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
