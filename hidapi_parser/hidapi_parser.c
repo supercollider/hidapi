@@ -1586,7 +1586,7 @@ void hid_parse_element_info( struct hid_dev_desc * devdesc ){
     // To keep track of indices
     int new_index = 0;
 
-    int numColls = 0;
+    ULONG numColls = 0;
 
     NTSTATUS nt_res;
     PHIDP_PREPARSED_DATA pp_data = NULL;
