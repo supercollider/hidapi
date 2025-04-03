@@ -1,0 +1,9 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-linux:
+    uses: ./.github/workflows/build_linux.yml
+    secrets: inherit
