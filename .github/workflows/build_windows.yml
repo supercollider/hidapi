@@ -1,0 +1,37 @@
+name: Build Windows
+on:
+  workflow_call:
+
+jobs:
+  build-windows:
+    runs-on: windows-${{ matrix.os-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job-name: "32-bit"
+            cmake-arch: "Win32"
+            os-version: "2019"
+
+          - job-name: "64-bit MSVC 2022"
+            cmake-arch: "x64"
+            os-version: "2022"
+
+    name: Windows ${{ matrix.job-name }}
+    env:
+      BUILD_PATH: ${{ github.workspace }}/build
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: configure
+        shell: bash
+        run: |
+          mkdir $BUILD_PATH && cd $BUILD_PATH
+          cmake -A "${{ matrix.cmake-arch }}" ..
+
+      - name: build
+        shell: bash
+        run: cmake --build $BUILD_PATH --target hidapi
