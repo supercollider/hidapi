@@ -1,0 +1,62 @@
+name: Build Linux
+on:
+  workflow_call:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-${{ matrix.os-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job-name: ""
+            os-version: "22.04"
+            c-compiler: "gcc-11"
+            cxx-compiler: "g++-11"
+
+          - job-name: ""
+            os-version: "24.04"
+            c-compiler: "gcc-13"
+            cxx-compiler: "g++-13"
+
+          - job-name: ""
+            os-version: "22.04"
+            c-compiler: "clang-14"
+            cxx-compiler: "clang++-14"
+
+          - job-name: ""
+            os-version: "24.04"
+            c-compiler: "clang-18"
+            cxx-compiler: "clang++-18"
+
+    name: Ubuntu ${{ matrix.os-version }} ${{ matrix.c-compiler }} ${{ matrix.job-name }}
+    env:
+      BUILD_PATH: ${{ github.workspace }}/build
+      CC: ${{ matrix.c-compiler }}
+      CXX: ${{ matrix.cxx-compiler }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential cmake libudev-dev
+          # install appropriate clang/gcc compilers
+          if [[ "$CC" =~ clang-[1-9] ]]; then
+            sudo apt-get install -y $CC # package names are clang-X
+            sudo apt-get install -y libc++-${CC##clang-}-dev libc++abi-${CC##clang-}-dev # install additional libraries; package names are libc++-X-dev and libc++abi-X-dev
+          elif [[ "$CC" =~ gcc-[1-9] ]]; then
+            sudo apt-get install -y $CXX # package names are g++-X
+          fi
+
+      - name: configure
+        run: |
+          mkdir $BUILD_PATH && cd $BUILD_PATH
+          cmake ..
+
+      - name: build
+        run: |
+          cmake --build $BUILD_PATH --target hidapi

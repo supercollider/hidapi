@@ -1,0 +1,17 @@
+name: CI
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  build-linux:
+    uses: ./.github/workflows/build_linux.yml
+    secrets: inherit
+
+  build-macos:
+    uses: ./.github/workflows/build_macos.yml
+    secrets: inherit
+
+  build-windows:
+    uses: ./.github/workflows/build_windows.yml
+    secrets: inherit
