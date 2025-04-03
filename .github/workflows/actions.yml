@@ -7,3 +7,8 @@ jobs:
   build-linux:
     uses: ./.github/workflows/build_linux.yml
     secrets: inherit
+
+  build-macos:
+    uses: ./.github/workflows/build_macos.yml
+    secrets: inherit
+  

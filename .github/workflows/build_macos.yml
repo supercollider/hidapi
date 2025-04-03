@@ -1,0 +1,40 @@
+name: Build Mac OS
+on:
+  workflow_call:
+
+jobs:
+  build-macos:
+    runs-on: macos-${{ matrix.os-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job-name: "arm64"
+            os-version: "15"
+            xcode-version: "16.0"
+            deployment-target: "11"
+            cmake-architectures: "arm64"
+
+          - job-name: "x64"
+            os-version: "13"
+            xcode-version: "15.2"
+            deployment-target: "11"
+            cmake-architectures: "x86_64"
+
+    name: macOS ${{ matrix.job-name }}
+    env:
+      BUILD_PATH: ${{ github.workspace }}/build
+      MACOSX_DEPLOYMENT_TARGET: "${{ matrix.deployment-target }}"
+      CMAKE_OSX_ARCHITECTURES: "${{ matrix.cmake-architectures }}"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: configure
+        run: |
+          mkdir $BUILD_PATH && cd $BUILD_PATH
+          cmake ..
+
+      - name: build
+        run: cmake --build $BUILD_PATH --target hidapi
